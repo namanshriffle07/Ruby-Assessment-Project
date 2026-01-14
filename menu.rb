@@ -1,4 +1,4 @@
-require_relative('admin')
+require('./admin')
 require_relative('cart')
 require_relative('order')
 require_relative('product')
@@ -9,20 +9,21 @@ require('uri')
 class Menu
   def initialize
     @store = Store.new
-    @admin = Admin.new("namannb45@gmail.com", "naman123")
   end
 
   def mainmenu
     loop do
-      puts "\n1. Sign Up\n2. Sign In\n3. Admin Login\n4. Exit"
+      puts "\n1. Sign Up\n2. Sign In\n3. Create Admin\n4. Admin Login\n5. Exit"
       case gets.to_i
       when 1 
         signup
       when 2 
         signin
-      when 3 
+      when 3
+        create_admin
+      when 4
         admin_login
-      when 4 
+      when 5 
         break
       else 
         puts "Invalid option"
@@ -64,7 +65,8 @@ class Menu
     loop do
       puts "\n1. View Products\n2. Add to Cart\n3. View Cart\n4. Checkout\n5. View Orders\n6. Sign Out"
       case gets.to_i
-      when 1 then view_products
+      when 1 
+        view_products
       when 2
         print "Product ID: "
         product_id = gets.to_i
@@ -84,9 +86,29 @@ class Menu
         end
       when 5
         user.orders.each(&:details)
-      when 6 then break
-      else puts "Invalid option"
+      when 6
+        break
+      else 
+        puts "Invalid option"
       end
+    end
+  end
+
+  def create_admin
+    print "Please enter your email: "
+    email = gets.chop
+    print "Please enter your password: "
+    password = gets.chop
+
+    exist = @store.find_user(email)
+    
+    if email =~ URI::MailTo::EMAIL_REGEXP && !exist
+      @store.add_user(User.new(email, password))
+      puts "Admin created successfully\nEmail : #{email}"
+    elsif exist
+      puts "Admin already exists!"
+    else 
+      puts "Please enter a valid email address"
     end
   end
 
@@ -95,10 +117,13 @@ class Menu
     email = gets.chop
     print "Password: "
     password = gets.chop
-    if email == @admin.email && @admin.authenticate(password)
+
+    user = @store.find_user(email)
+
+    if user&.authenticate(password) && email =~ URI::MailTo::EMAIL_REGEXP
       admin_menu
     else
-      puts "Invalid admin credentials"
+      puts "Invalid credentials"
     end
   end
 
@@ -115,6 +140,7 @@ class Menu
       when 4 
         view_products
       when 5 
+        puts "Exiting..."
         break
       else 
         puts "Invalid option"
@@ -130,7 +156,7 @@ class Menu
 
   def add_product
     print "Name: "
-    name = gets.chomp
+    name = gets.chop
     print "Price: "
     price = gets.to_f
     print "Quantity: "
@@ -141,7 +167,8 @@ class Menu
 
   def update_product
     print "Product ID: "
-    product = @store.find_product(gets.to_i)
+    product_id = gets.to_i
+    product = @store.find_product(product_id)
     print "New Price: "
     product.price = gets.to_f
     print "New Quantity: "
@@ -150,7 +177,8 @@ class Menu
 
   def delete_product
     print "Product ID: "
-    product = @store.find_product(gets.to_i)
+    product_id = gets.to_i
+    product = @store.find_product(product_id)
     @store.products.delete(product)
   end
 end

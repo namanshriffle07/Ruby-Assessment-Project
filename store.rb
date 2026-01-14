@@ -24,7 +24,8 @@ class Store
   end
 
   def find_user(email)
-    @users.find { |u| u.email == email }
+    email = email.split('@').split('+')
+    @users.find { |u| u.email.split('@').first == email }
   end
 
   def find_product(id)
