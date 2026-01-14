@@ -14,7 +14,7 @@ class Menu
     @store = Store.new
   end
 
-  def mainmenu
+  def main_menu
     loop do
       puts "\n1. Sign Up\n2. Sign In\n3. Create Admin\n4. Admin Login\n5. Exit"
       case gets.to_i
@@ -36,11 +36,9 @@ class Menu
 
   def signup
     print "Please enter your email: "
-    email = gets.chop
+    email = gets.chomp
     print "Please enter your password: "
-    password = gets.chop
-
-
+    password = gets.chomp
 
     @usr = Users.new
 
@@ -56,9 +54,9 @@ class Menu
 
   def signin
     print "Email: "
-    email = gets.chop
+    email = gets.chomp
     print "Password: "
-    password = gets.chop
+    password = gets.chomp
 
     user = @store.find_user(email)
 
@@ -111,9 +109,9 @@ class Menu
 
   def create_admin
     print "Please enter your email: "
-    email = gets.chop
+    email = gets.chomp
     print "Please enter your password: "
-    password = gets.chop
+    password = gets.chomp
 
     exist = @store.find_user(email)
     
@@ -129,9 +127,9 @@ class Menu
 
   def admin_login
     print "Email: "
-    email = gets.chop
+    email = gets.chomp
     print "Password: "
-    password = gets.chop
+    password = gets.chomp
 
     user = @store.find_user(email)
 
@@ -171,7 +169,7 @@ class Menu
 
   def add_product
     print "Name: "
-    name = gets.chop
+    name = gets.chomp
     print "Price: "
     price = gets.to_f
     print "Quantity: "
@@ -199,4 +197,4 @@ class Menu
 end
 
 aa = Menu.new
-aa.mainmenu
+aa.main_menu
