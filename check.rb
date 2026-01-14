@@ -21,7 +21,7 @@ class Store
   def createUser(name,age)
     @name = name
     @age = age
-    @users << User.new(@name,@age)
+    @users.append(User.new(@name,@age))
   end
 
   def printUsers
