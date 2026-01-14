@@ -5,7 +5,7 @@ class Cart
 
   def add_product(product, qty)
     raise "Not enough stock" if product.quantity < qty
-    @items[product] += qty
+    @items[product] +=  qty
   end
 
   def empty?
