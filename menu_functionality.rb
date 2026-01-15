@@ -16,7 +16,6 @@ class MenuFunctionality
     @store = Store.new
     @admin = Admin.new("admin@gmail.com", "Admin@123")
 
-    users = {}
     File.readlines("credential.txt").each do |line|
       username, password = line.strip.split("=")
       @store.add_user(User.new(username, password))
