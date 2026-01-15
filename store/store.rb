@@ -1,3 +1,5 @@
+require 'debug/prelude'
+
 class Store
   def initialize
     @products = []
@@ -14,9 +16,10 @@ class Store
   end
 
   def seed_products
-    @products << Product.new(1, "Leptop", 1000, 5)
-    @products << Product.new(2, "Phone", 500, 10)
-    @products << Product.new(3, "Headphones", 100, 15)
+    product_details = [{"id"=>1,"name"=>"leptop","price"=>1000,"quantity"=>5},{"id"=>2,"name"=>"Macboor Air","price"=>10000,"quantity"=>8}]
+    product_details.each do |row|   
+      @products << Product.new(row["id"],row["name"],row["price"],row["quantity"])
+    end
   end
 
   def add_user(user)

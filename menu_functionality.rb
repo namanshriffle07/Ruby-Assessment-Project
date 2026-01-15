@@ -65,7 +65,7 @@ class MenuFunctionality
     valid = validate_email(email) && validate_password(password)
 
     if valid
-      if @usr.login(email,password) 
+      if Users.login(email,password) 
         user_menu(user)
       end
     end
@@ -89,7 +89,7 @@ class MenuFunctionality
         product_id = gets
         print "Quantity: "
         qty = gets
-        if product_id =~ INTEGER_ && qty =~ /^\d+$/
+        if product_id =~ INTEGER_REGEX && qty =~ /^\d+$/
           product_id = product_id.to_i
           qty = qty.to_i
           product = @store.find_product(product_id)

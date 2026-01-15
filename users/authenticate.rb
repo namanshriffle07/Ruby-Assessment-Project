@@ -3,7 +3,7 @@ require_relative('user')
 
 class Users < Store
   FILE = "credential.txt"
-
+  @usernew = Users.new
   def initialize
     File.write(FILE,"") unless File.exist?(FILE)
   end
@@ -12,7 +12,9 @@ class Users < Store
     users = {}
     File.readlines(FILE).each do |line|
       username, password = line.strip.split("=")
+      username = 
       users[username] = password
+
     end
     users
   end
@@ -37,8 +39,9 @@ class Users < Store
     end
   end
 
-  def login(username, password)
-    users = load_users
+  def self.login(username, password)
+    
+    users = @usernew.load_users
 
     if users[username] == password
       puts "User logged in successfully"
