@@ -12,8 +12,9 @@ class MenuFunctionality
   
   def initialize
     @store = Store.new
+    @admin = Admin.new("admin@gmail.com", "Admin@123")
   end
-def validate_email(email)
+  def validate_email(email)
     return email =~ URI::MailTo::EMAIL_REGEXP || email == nil
   end
 
@@ -87,12 +88,15 @@ def validate_email(email)
           puts "Cart is empty"
         else
           order = cart.checkout
-          puts order
-          user.add_order(order)
+          user&.add_order(order)
           puts "Order placed successfully"
         end
       when 5
-        user.orders.each(&:details)
+        if order == nil
+          puts "No orders yet"
+        else   
+          order&.details
+        end
       when 6
         break
       else 
@@ -136,9 +140,8 @@ def validate_email(email)
 
     user = @store.find_user(email)
 
-    valid = 
     if validate_email(email) && validate_password(password)
-      if user&.authenticate(password) 
+      if user&.authenticate(password) || email == @admin.email && @admin.authenticate(password)
         admin_menu
       end
     end 

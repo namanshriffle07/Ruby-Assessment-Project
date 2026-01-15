@@ -6,8 +6,17 @@ class Cart
     @items = Hash.new(0)
   end
 
+  def is_integer?(input)
+    Integer(input)
+    true
+  rescue ArgumentError
+    false
+  end 
+
   def add_product(product, qty)
-    if product.quantity < qty
+    if !is_integer?(qty)
+      puts "Please enter quantity in integer"
+    elsif product.quantity < qty
       puts "Not enough stock"
     else 
       @items[product] +=  qty
@@ -26,7 +35,8 @@ class Cart
     @items.each do |product, qty|
       product.quantity -= qty
     end
-    order = Order.new(@items)
+    order = Order.new
+    order.orders = @items
     @items.clear
     order
   end
