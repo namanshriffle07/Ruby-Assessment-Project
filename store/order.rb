@@ -11,6 +11,12 @@ class Order
     @items.each do |product, qty|
       puts "Product:#{product.name}  Quantity: #{qty}"
     end
+    @totalamt = 0
+    @items.each do |product, qty|
+      total = product.price * qty
+      @totalamt += total
+    end
+    puts "Total amount : #{@totalamt}"
   end
 end
 

@@ -21,6 +21,7 @@ class MenuFunctionality
       @store.add_user(User.new(username, password))
     end
   end
+  
 
   def validate_email(email)
     return email =~ URI::MailTo::EMAIL_REGEXP || email == nil
@@ -96,11 +97,13 @@ class MenuFunctionality
             puts "Product not found"
           else 
             cart.add_product(product, qty)
+            puts "Product successfully added to cart"
           end
         else
           puts "Enter product id and quantity in valid format"
         end
       when 3 
+        puts "Products in cart"
         cart.view
       when 4
         if cart.empty?
@@ -109,6 +112,7 @@ class MenuFunctionality
           order = cart.checkout
           user.add_order(order)
           puts "Order placed successfully"
+          user&.orders&.each(&:details)
         end
       when 5
         puts "Current orders are given below"
@@ -211,9 +215,15 @@ class MenuFunctionality
     print "Quantity: "
     qty = gets
     
-    if price =~ FLOAT_REGEX && qty =~ INTEGER_REGEX
+    if price =~ INTEGER_REGEX && qty =~ INTEGER_REGEX
       id = @store.products.size + 1
-      @store.products << Product.new(id, name, price, qty)
+      price = price.to_i
+      qty = qty.to_i
+      if !name.match?(INTEGER_REGEX)
+        @store.products << Product.new(id, name, price, qty)
+      else
+        puts "Product name can't be number : "
+      end
     else 
       puts "Invalid product details"
     end
@@ -233,6 +243,7 @@ class MenuFunctionality
       product = @store.find_product(product_id)
       product.price = product_price
       product.quantity = product_quantity
+      puts "Product successfully updated"
     else
       puts "Invalid product details"
     end
@@ -245,6 +256,7 @@ class MenuFunctionality
       product_id = product_id.to_i
       product = @store.find_product(product_id)
       @store.products.delete(product)
+      puts "Product deleted successfully"
     else
       puts "Enter a valid product id"
     end

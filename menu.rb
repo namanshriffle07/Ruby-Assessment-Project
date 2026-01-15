@@ -2,6 +2,8 @@ require('./menu_functionality')
 
 class Menu < MenuFunctionality
   def main_menu
+
+
     loop do
       puts "\n1. Sign Up\n2. Sign In\n3. Create Admin\n4. Admin Login\n5. Exit"
       case gets.to_i
@@ -22,5 +24,4 @@ class Menu < MenuFunctionality
   end  
 end
 
-aa = Menu.new
-aa.main_menu
+Menu.new.main_menu
