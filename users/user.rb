@@ -1,6 +1,3 @@
-require('./store/order')
-require('./store/cart')
-
 class User
   
   def initialize(email, password)

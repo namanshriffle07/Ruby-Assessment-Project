@@ -9,11 +9,20 @@ require('uri')
 
 class MenuFunctionality
   PASSWORD_REGEX = /\A(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&+=]).{8,}\z/
-  
+  FLOAT_REGEX = /\A[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?\z/
+  INTEGER_REGEX = /^\d+$/
+
   def initialize
     @store = Store.new
     @admin = Admin.new("admin@gmail.com", "Admin@123")
+
+    users = {}
+    File.readlines("credential.txt").each do |line|
+      username, password = line.strip.split("=")
+      @store.add_user(User.new(username, password))
+    end
   end
+
   def validate_email(email)
     return email =~ URI::MailTo::EMAIL_REGEXP || email == nil
   end
@@ -21,6 +30,7 @@ class MenuFunctionality
   def validate_password(password)
     return password.match?(PASSWORD_REGEX) || password == nil
   end
+
 
   def signup
     print "Please enter your email: "
@@ -55,7 +65,7 @@ class MenuFunctionality
     valid = validate_email(email) && validate_password(password)
 
     if valid
-      if @usr.login(email,password)
+      if @usr.login(email,password) 
         user_menu(user)
       end
     end
@@ -76,11 +86,21 @@ class MenuFunctionality
         view_products
       when 2
         print "Product ID: "
-        product_id = gets.to_i
-        product = @store.find_product(product_id)
+        product_id = gets
         print "Quantity: "
-        qty = gets.to_i
-        cart.add_product(product, qty)
+        qty = gets
+        if product_id =~ INTEGER_ && qty =~ /^\d+$/
+          product_id = product_id.to_i
+          qty = qty.to_i
+          product = @store.find_product(product_id)
+          if product == nil
+            puts "Product not found"
+          else 
+            cart.add_product(product, qty)
+          end
+        else
+          puts "Enter product id and quantity in valid format"
+        end
       when 3 
         cart.view
       when 4
@@ -88,15 +108,16 @@ class MenuFunctionality
           puts "Cart is empty"
         else
           order = cart.checkout
-          user&.add_order(order)
+          user.add_order(order)
           puts "Order placed successfully"
         end
       when 5
-        if order == nil
+        puts "Current orders are given below"
+        if user.orders.empty?
           puts "No orders yet"
-        else   
-          order&.details
-        end
+        else 
+          user&.orders&.each(&:details)
+        end  
       when 6
         break
       else 
@@ -142,7 +163,10 @@ class MenuFunctionality
 
     if validate_email(email) && validate_password(password)
       if user&.authenticate(password) || email == @admin.email && @admin.authenticate(password)
+        puts "Welcome! #{email}"
         admin_menu
+      else
+        puts "Admin not found"
       end
     end 
     if !validate_email(email)
@@ -184,27 +208,46 @@ class MenuFunctionality
     print "Name: "
     name = gets.chomp
     print "Price: "
-    price = gets.to_f
+    price = gets
     print "Quantity: "
-    qty = gets.to_i
-    id = @store.products.size + 1
-    @store.products << Product.new(id, name, price, qty)
+    qty = gets
+    
+    if price =~ FLOAT_REGEX && qty =~ INTEGER_REGEX
+      id = @store.products.size + 1
+      @store.products << Product.new(id, name, price, qty)
+    else 
+      puts "Invalid product details"
+    end
   end
 
   def update_product
     print "Product ID: "
-    product_id = gets.to_i
-    product = @store.find_product(product_id)
+    product_id = gets
     print "New Price: "
-    product.price = gets.to_f
+    product_price = gets
     print "New Quantity: "
-    product.quantity = gets.to_i
+    product_quantity = gets
+    if product_id =~ INTEGER_REGEX && product_price =~ FLOAT_REGEX && product_quantity =~ INTEGER_REGEX
+      product_id = product_id.to_i
+      product_price = product_price.to_f
+      product_quantity = product_quantity.to_i
+      product = @store.find_product(product_id)
+      product.price = product_price
+      product.quantity = product_quantity
+    else
+      puts "Invalid product details"
+    end
   end
 
   def delete_product
     print "Product ID: "
-    product_id = gets.to_i
-    product = @store.find_product(product_id)
-    @store.products.delete(product)
+    product_id = gets
+    if product_id =~ INTEGER_REGEX
+      product_id = product_id.to_i
+      product = @store.find_product(product_id)
+      @store.products.delete(product)
+    else
+      puts "Enter a valid product id"
+    end
   end
 end 

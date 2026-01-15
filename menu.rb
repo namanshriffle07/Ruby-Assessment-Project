@@ -1,8 +1,6 @@
 require('./menu_functionality')
 
 class Menu < MenuFunctionality
-  
-
   def main_menu
     loop do
       puts "\n1. Sign Up\n2. Sign In\n3. Create Admin\n4. Admin Login\n5. Exit"
@@ -21,9 +19,7 @@ class Menu < MenuFunctionality
         puts "Invalid option"
       end
     end
-  end
-
-  
+  end  
 end
 
 aa = Menu.new

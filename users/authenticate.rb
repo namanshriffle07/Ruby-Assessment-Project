@@ -1,4 +1,7 @@
-class Users
+require('./store/store.rb')
+require_relative('user')
+
+class Users < Store
   FILE = "credential.txt"
 
   def initialize
@@ -11,7 +14,6 @@ class Users
       username, password = line.strip.split("=")
       users[username] = password
     end
-
     users
   end
   
